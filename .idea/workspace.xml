@@ -249,7 +249,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="916" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="916" extended-state="7" />
     <layout>
       <window_info content_ui="combo" x="697" y="58" width="206" height="783" id="Project" order="0" sideWeight="0.49734512" visible="true" weight="0.13054499" />
       <window_info id="Structure" order="1" sideWeight="0.50265485" side_tool="true" weight="0.13054499" />
