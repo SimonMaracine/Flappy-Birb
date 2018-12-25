@@ -23,10 +23,13 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Tests/Try.py">
+        <entry file="file://$PROJECT_DIR$/Flappy_Birb_v0.3.1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="154">
+              <caret line="363" column="16" selection-start-line="363" selection-start-column="16" selection-end-line="363" selection-end-column="16" />
+              <folding>
+                <element signature="e#34#47#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -102,8 +105,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
       <pane id="Scope" />
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -247,9 +250,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="916" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" x="697" y="58" width="206" height="783" id="Project" order="0" sideWeight="0.49734512" visible="true" weight="0.13054499" />
+      <window_info content_ui="combo" x="697" y="58" width="206" height="783" id="Project" order="0" sideWeight="0.49734512" visible="true" weight="0.13054499" />
       <window_info id="Structure" order="1" sideWeight="0.50265485" side_tool="true" weight="0.13054499" />
       <window_info id="Favorites" order="2" sideWeight="0.5026316" side_tool="true" weight="0.12864386" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -260,7 +262,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32894737" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" weight="0.32950193" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32950193" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.32894737" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.32950193" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32894737" />
       <window_info anchor="bottom" id="Inspection Results" order="11" weight="0.32894737" />
@@ -401,16 +403,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Flappy_Birb_v0.3.1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="357" column="52" selection-start-line="357" selection-start-column="52" selection-end-line="357" selection-end-column="52" />
-          <folding>
-            <element signature="e#34#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Main menu test/main_menu.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
@@ -447,26 +439,22 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Tests/file.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="22" selection-start-column="22" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/file.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="6" selection-start-column="6" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Tests/file.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/Tests/Try.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Flappy_Birb_v0.3.1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="363" column="16" selection-start-line="363" selection-start-column="16" selection-end-line="363" selection-end-column="16" />
+          <folding>
+            <element signature="e#34#47#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
