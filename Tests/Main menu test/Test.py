@@ -1,5 +1,5 @@
+from main_menu import MainMenu
 import pygame
-from main_menu import *
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -11,7 +11,6 @@ running = True
 
 game_font = pygame.font.SysFont("calibri", 60)
 in_game_text = game_font.render("IN GAME ROOM", 0, (255, 255, 255))
-
 
 
 
@@ -75,10 +74,6 @@ game_rooms = (main_menu_room, game_room)
 current_room = main_menu_room
 
 while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
     current_room()
 
 pygame.quit()
