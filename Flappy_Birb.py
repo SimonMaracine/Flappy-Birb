@@ -20,7 +20,7 @@ else:
 
 # The system that I made for choosing the size of the objects is quite inefficient. I didn't bother changing it. But at least it works.
 
-pygame.display.set_icon(pygame.image.load("BirbIcon.png"))
+pygame.display.set_icon(pygame.image.load("Data\\BirbIcon.png"))
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Flappy Birb")
 clock = pygame.time.Clock()
@@ -213,9 +213,9 @@ class Cloud(object):
 
 def check_data_file():  # checks if the file exists
     try:
-        open("Data.txt")
+        open("Data\\Data.txt")
     except IOError:
-        data_file = open("Data.txt", "w")
+        data_file = open("Data\\Data.txt", "w")
         data_file.write("000,0")
         data_file.close()
         print "File created: Data.txt."
@@ -224,7 +224,7 @@ def check_data_file():  # checks if the file exists
 
 def save_load_best():  # saves and loads the best score
     temp_score = score
-    with open("Data.txt", "r+") as data_file:
+    with open("Data\\Data.txt", "r+") as data_file:
         prev_best_score = int(data_file.read()[:3])
         nr_char = len(str(temp_score))
 
@@ -243,7 +243,7 @@ def save_load_best():  # saves and loads the best score
             return str(prev_best_score)
 
 def statistics():  # saves how many times the user has played
-    with open("Data.txt", "r+") as data_file:
+    with open("Data\\Data.txt", "r+") as data_file:
         prev_times_played = int(data_file.read()[4:])
         if start:
             prev_times_played += 1
