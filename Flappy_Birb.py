@@ -1,5 +1,7 @@
 # The code is quite bad. I know.
 
+from engine.room import Room
+from engine.room_button import Button
 import pygame
 import pygame.gfxdraw
 from random import randint, uniform
