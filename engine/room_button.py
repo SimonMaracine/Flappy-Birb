@@ -1,15 +1,16 @@
 import pygame
 
 class Button(object):
-    def __init__(self, text, (x, y), font, actual_text):
+    def __init__(self, text, (x, y), color, font, actual_text):
         self.text = text
         self.x = x
         self.y = y
+        self.color = color
         self.width = font.size(actual_text)[0]
         self.height = font.size(actual_text)[1]
 
     def show(self, surface):
-        pygame.draw.rect(surface, (255, 16, 16), (self.x, self.y, self.width, self.height))
+        pygame.draw.rect(surface, self.color, (self.x, self.y, self.width, self.height))
         surface.blit(self.text, (self.x, self.y))
 
     def pressed(self):
