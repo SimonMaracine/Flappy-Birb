@@ -346,7 +346,7 @@ def game_room():
             timer -= 1
 
         drawing()
-        clock.tick(65)
+        clock.tick(6000005)
 
     save_load_best()
     statistics()
