@@ -356,20 +356,23 @@ def main_room():
     global running, current_room
 
     title_font = pygame.font.SysFont("calibri", 100, True)
-    button_font = pygame.font.SysFont("calibri", 60)
+    play_button_font = pygame.font.SysFont("calibri", 75, True)
+    button_font = pygame.font.SysFont("calibri", 60, True)
     title_text = title_font.render("Flappy Birb", False, (0, 0, 0))
-    text1 = button_font.render("PLAY", False, (0, 0, 0))
+    text1 = play_button_font.render("PLAY", False, (0, 0, 0))
     text2 = button_font.render("OPTIONS", False, (0, 0, 0))
-    text3 = button_font.render("QUIT", False, (0, 0, 0))
-    button1 = Button(text1, (width / 2 - 50, height / 2), (255, 16, 16), button_font, "PLAY")
-    button2 = Button(text2, (width / 2 - 50, height / 2 + 80), (255, 16, 16), button_font, "OPTIONS")
-    button3 = Button(text3, (width / 2 - 50, height / 2 + 160), (255, 16, 16), button_font, "QUIT")
-    buttons = (button1, button2, button3)
+    text3 = button_font.render("INSTRUCTIONS", False, (0, 0, 0))
+    text4 = button_font.render("QUIT", False, (0, 0, 0))
+    button1 = Button(text1, (width / 2 - 80, height / 2 - 25), (255, 16, 16), play_button_font, "PLAY")
+    button2 = Button(text2, (width / 2 - 80, height / 2 + 75), (255, 16, 16), button_font, "OPTIONS")
+    button3 = Button(text3, (width / 2 - 80, height / 2 + 150), (255, 16, 16), button_font, "INSTRUCTIONS")
+    button4 = Button(text4, (width / 2 - 80, height / 2 + 225), (255, 16, 16), button_font, "QUIT")
+    buttons = (button1, button2, button3, button4)
 
     main = MainMenu(title_text, (230, 230, 16), buttons)
 
     while main.run:
-        for event in pygame.event.get():
+        for event in pygame.event.get():  # todo implement OPTIONS button
             if event.type == pygame.QUIT:
                 main.exit()
                 current_room = quit
@@ -380,7 +383,7 @@ def main_room():
                 elif main.button_pressed() == 1:
                     main.exit()
                     current_room = options_room
-                elif main.button_pressed() == 2:
+                elif main.button_pressed() == 3:
                     main.exit()
                     current_room = quit
 
@@ -393,15 +396,15 @@ def main_room():
 def options_room():
     global running, current_room
 
-    title_font = pygame.font.SysFont("calibri", 60, True)
-    button_font = pygame.font.SysFont("calibri", 60)
+    title_font = pygame.font.SysFont("calibri", 80, True)
+    button_font = pygame.font.SysFont("calibri", 60, True)
     title_text = title_font.render("Options", False, (0, 0, 0))
     text1 = button_font.render("RESET DATA", False, (0, 0, 0))
     text2 = button_font.render("INFO", False, (0, 0, 0))
     text3 = button_font.render("BACK", False, (0, 0, 0))
-    button1 = Button(text1, (width / 2 - 50, height / 2), (255, 16, 16), button_font, "RESET DATA")
-    button2 = Button(text2, (width / 2 - 50, height / 2 + 80), (255, 16, 16), button_font, "INFO")
-    button3 = Button(text3, (width / 2 - 50, height / 2 + 160), (255, 16, 16), button_font, "BACK")
+    button1 = Button(text1, (width / 2 - 80, height / 2 + 75), (255, 16, 16), button_font, "RESET DATA")  # todo implement reset best score
+    button2 = Button(text2, (width / 2 - 80, height / 2 + 150), (255, 16, 16), button_font, "INFO")
+    button3 = Button(text3, (width / 2 - 80, height / 2 + 225), (255, 16, 16), button_font, "BACK")
     buttons = (button1, button2, button3)
 
     options = MainMenu(title_text, (200, 200, 16), buttons)
@@ -420,7 +423,7 @@ def options_room():
                     options.exit()
                     current_room = main_room
 
-        options.show(screen, (250, 200))
+        options.show(screen, (230, 270))
         pygame.display.flip()
         clock.tick(48)
 

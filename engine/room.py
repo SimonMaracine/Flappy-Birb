@@ -15,7 +15,7 @@ class MainMenu(Room):
         self.bg_color = bg_color
         self.button_list = button_list
 
-    def show(self, surface, (x, y)=(300, 200)):
+    def show(self, surface, (x, y)):
         surface.fill(self.bg_color)
         surface.blit(self.title, (x, y))
         for button in self.button_list:
