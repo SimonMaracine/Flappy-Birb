@@ -1,8 +1,19 @@
-import pygame
-
 class Room(object):
-    def __init__(self):
+    def __init__(self, title=None, button_list=None):
         self.run = True
+        self.title = title
+        self.button_list = button_list
+
+    def show(self, surface, (x, y)):
+        surface.blit(self.title, (x, y))
+        for button in self.button_list:
+            button.show(surface)
+
+    def button_pressed(self):
+        for i, button in enumerate(self.button_list):
+            if button.pressed():
+                return i
+        return 16
 
     def exit(self):
         self.run = False
@@ -20,9 +31,3 @@ class MainMenu(Room):
         surface.blit(self.title, (x, y))
         for button in self.button_list:
             button.show(surface)
-
-    def button_pressed(self):
-        for i, button in enumerate(self.button_list):
-            if button.pressed():
-                return i
-        return 16

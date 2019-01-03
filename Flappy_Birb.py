@@ -5,6 +5,7 @@ from engine.room_button import Button
 import pygame
 import pygame.gfxdraw
 from random import randint, uniform
+import sys
 
 version = "v0.4.0"
 width = 600
@@ -168,16 +169,14 @@ def check_data_file():  # checks if the file exists
         data_file = open("Data\\Data.txt", "w")
         data_file.write("000,0")
         data_file.close()
-        print "File created: Data.txt."
-    # else:
-    #     print "Found file."
+        print "Data file not found; creating a new one."
 
 
 def save_load_best():  # saves and loads the best score
-    temp_score = score
+    score_ = score
     with open("Data\\Data.txt", "r+") as data_file:
         prev_best_score = int(data_file.read()[:3])
-        nr_char = len(str(temp_score))
+        nr_char = len(str(score_))
 
         if nr_char == 1:
             seek = 2
@@ -186,10 +185,10 @@ def save_load_best():  # saves and loads the best score
         else:
             seek = 0
 
-        if temp_score > prev_best_score:
+        if score_ > prev_best_score:
             data_file.seek(seek)
-            data_file.write(str(temp_score))
-            return str(temp_score)
+            data_file.write(str(score_))
+            return str(score_)
         else:
             return str(prev_best_score)
 
@@ -204,8 +203,18 @@ def statistics():  # saves how many times the user has played
         return prev_times_played
 
 
-def erase_data():  # todo implement this
-    pass
+def load_data():
+    with open("Data\\Data.txt", "r") as data_file:
+        best_score = int(data_file.read()[:3])
+        data_file.seek(0)
+        times_played = data_file.read()[4:]
+        return best_score, times_played
+
+
+def erase_data():
+    with open("Data\\Data.txt", "w") as data_file:
+        data_file.write("000,0")
+    print "Data erased."
 
 
 def show_score(bird_):  # shows the score while playing
@@ -216,8 +225,8 @@ def show_score(bird_):  # shows the score while playing
 
 def show_game_over(bird_):  # shows the 'game over interface'
     if not bird_.in_air:
-        end_surface.fill((255, 255, 170, 190))
-        screen.blit(end_surface, (100, 165))
+        background.fill((255, 255, 170, 190))
+        screen.blit(background, (100, 165))
         screen.blit(game_over_text, (width / 2 - 165, 240))
         screen.blit(replay_text1, (width / 2 - 128, 430))
         screen.blit(replay_text2, (width / 2 - 130, 490))
@@ -241,6 +250,40 @@ def show_fps():
 def show_version():
     ver_text = ver_font.render(version, False, (0, 0, 0))
     screen.blit(ver_text, (width - 45, height - 20))
+
+
+def ask_reset():
+    global current_room
+
+    title_font = pygame.font.SysFont("calibri", 55, True)
+    button_font = pygame.font.SysFont("calibri", 50, True)
+    title_text = title_font.render("Are you sure?", False, (0, 0, 0))
+    text1 = button_font.render("Yes", False, (0, 0, 0))
+    text2 = button_font.render("Discard", False, (0, 0, 0))
+    button1 = Button(text1, (width / 2 - 130, height / 2 + 80), (255, 16, 16), button_font, "Yes")
+    button2 = Button(text2, (width / 2 + 20, height / 2 + 80), (255, 16, 16), button_font, "Discard")
+    buttons = (button1, button2)
+    background = pygame.Surface((380, 250), pygame.SRCALPHA)
+
+    ask_reset = Room(title_text, buttons)
+
+    while ask_reset.run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if ask_reset.button_pressed() == 0:
+                    erase_data()
+                    ask_reset.exit()
+                elif ask_reset.button_pressed() == 1:
+                    ask_reset.exit()
+
+        background.fill((235, 235, 110))
+        screen.blit(background, (120, 275))
+        ask_reset.show(screen, (155, 340))
+        pygame.display.flip()
+        clock.tick(48)
 
 
 def drawing():
@@ -290,13 +333,13 @@ def drawing():
     show_score(bird)
     show_game_over(bird)
     show_fps()
-    show_version()
+    # show_version()
 
     pygame.display.flip()
 
 
 def game_room():
-    global running, current_room, score, timer, restart_times, start, bird, pipes, dirts, clouds
+    global current_room, score, timer, restart_times, start, bird, pipes, dirts, clouds
 
     timer = 120  # for spawning pipes
     score = 0
@@ -353,11 +396,12 @@ def game_room():
 
 
 def main_room():
-    global running, current_room
+    global current_room
 
     title_font = pygame.font.SysFont("calibri", 100, True)
     play_button_font = pygame.font.SysFont("calibri", 75, True)
     button_font = pygame.font.SysFont("calibri", 60, True)
+    that_font = pygame.font.SysFont("calibri", 35, True)
     title_text = title_font.render("Flappy Birb", False, (0, 0, 0))
     text1 = play_button_font.render("PLAY", False, (0, 0, 0))
     text2 = button_font.render("OPTIONS", False, (0, 0, 0))
@@ -371,8 +415,12 @@ def main_room():
 
     main = MainMenu(title_text, (230, 230, 16), buttons)
 
+    check_data_file()
+    best_score = str(load_data()[0])
+    times_played = load_data()[1]
+
     while main.run:
-        for event in pygame.event.get():  # todo implement OPTIONS button
+        for event in pygame.event.get():  # todo implement INSTRUCTIONS button
             if event.type == pygame.QUIT:
                 main.exit()
                 current_room = quit
@@ -388,13 +436,17 @@ def main_room():
                     current_room = quit
 
         main.show(screen, (75, 50))
+        score_text = that_font.render("Best score: " + best_score, False, (0, 0, 0))
+        times_text = that_font.render("Times played: " + times_played, False, (0, 0, 0))
+        screen.blit(score_text, (100, 220))
+        screen.blit(times_text, (100, 270))
         show_version()
         pygame.display.flip()
         clock.tick(48)
 
 
 def options_room():
-    global running, current_room
+    global current_room
 
     title_font = pygame.font.SysFont("calibri", 80, True)
     button_font = pygame.font.SysFont("calibri", 60, True)
@@ -402,7 +454,7 @@ def options_room():
     text1 = button_font.render("RESET DATA", False, (0, 0, 0))
     text2 = button_font.render("INFO", False, (0, 0, 0))
     text3 = button_font.render("BACK", False, (0, 0, 0))
-    button1 = Button(text1, (width / 2 - 80, height / 2 + 75), (255, 16, 16), button_font, "RESET DATA")  # todo implement reset best score
+    button1 = Button(text1, (width / 2 - 80, height / 2 + 75), (255, 16, 16), button_font, "RESET DATA")
     button2 = Button(text2, (width / 2 - 80, height / 2 + 150), (255, 16, 16), button_font, "INFO")
     button3 = Button(text3, (width / 2 - 80, height / 2 + 225), (255, 16, 16), button_font, "BACK")
     buttons = (button1, button2, button3)
@@ -416,7 +468,7 @@ def options_room():
                 current_room = quit
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if options.button_pressed() == 0:
-                    pass
+                    ask_reset()
                 elif options.button_pressed() == 1:
                     pass
                 elif options.button_pressed() == 2:
@@ -452,7 +504,7 @@ game_over_text = game_over_font.render("Game Over", False, (0, 0, 0))
 best_score_font = pygame.font.SysFont("calibri", 32, True)  # best score
 fps_font = pygame.font.SysFont("calibri", 15, True)  # fps
 ver_font = pygame.font.SysFont("calibri", 15, True)  # version
-end_surface = pygame.Surface((400, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
+background = pygame.Surface((400, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
 
 current_room = main_room
 
