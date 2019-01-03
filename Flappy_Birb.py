@@ -39,10 +39,6 @@ class Player(object):
                 self.velocity += self.gravity
             self.velocity *= 0.9
             self.y += self.velocity
-            if self.y + self.height >= height - 115:
-                self.velocity = 0
-                self.gravity = 0
-                self.in_air = False
 
     def up(self):
         if height - 130 >= bird.y > 0 and bird.in_air:
@@ -223,21 +219,8 @@ def show_score(bird_):  # shows the score while playing
         screen.blit(score_text, (width / 2 - 10, 130))
 
 
-def show_game_over(bird_):  # shows the 'game over interface'
-    if not bird_.in_air:
-        background.fill((255, 255, 170, 190))
-        screen.blit(background, (100, 165))
-        screen.blit(game_over_text, (width / 2 - 165, 240))
-        screen.blit(replay_text1, (width / 2 - 128, 430))
-        screen.blit(replay_text2, (width / 2 - 130, 490))
-        end_score_text = end_score_font.render("Score: " + str(score), False, (0, 0, 0))
-        screen.blit(end_score_text, (width / 2 - 135, 360))
-        best_score_text = best_score_font.render("Best: " + save_load_best(), False, (0, 0, 0))
-        screen.blit(best_score_text, (width / 2 + 40, 360))
-
-
-def show_instructions():  # shows the instructions at the beginning (only twice)
-    if not start and restart_times <= 1:
+def show_instructions():  # shows the instructions at the beginning (only once)
+    if not start and restart_times < 1:
         screen.blit(instructions_text, (width / 2 - 160, height / 2 + 150))
 
 
@@ -252,16 +235,56 @@ def show_version():
     screen.blit(ver_text, (width - 45, height - 20))
 
 
-def ask_reset():
-    global current_room
+def game_over_room():
+    global current_room, restart_times
 
+    # screen.blit(replay_text1, (width / 2 - 128, 430))
+    # screen.blit(replay_text2, (width / 2 - 130, 490))
+    end_score_text = end_score_font.render("Score: " + str(score), True, (0, 0, 0))
+    best_score_text = best_score_font.render("Best: " + save_load_best(), True, (0, 0, 0))
+    button_font = pygame.font.SysFont("calibri", 52, True)
+    text1 = button_font.render("Replay", False, (0, 0, 0))
+    text2 = button_font.render("Exit", False, (0, 0, 0))
+    button1 = Button(text1, (width / 2 - 155, height / 2 + 80), (255, 16, 16), button_font, "Replay")
+    button2 = Button(text2, (width / 2 + 55, height / 2 + 80), (255, 16, 16), button_font, "Exit")
+    buttons = (button1, button2)
+
+    game_over = Room(game_over_text, buttons)
+
+    while game_over.run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_r and not bird.in_air:
+                restart_times += 1
+                # print restart_times
+                game_over.exit()
+                current_room = game_room
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if game_over.button_pressed() == 0:
+                    pass
+                elif game_over.button_pressed() == 1:
+                    game_over.exit()
+
+        end_background.fill((255, 255, 170, 190))
+        screen.blit(end_background, (100, 165))
+        game_over.show(screen, (width / 2 - 165, 240))
+        # screen.blit(game_over_text, (width / 2 - 165, 240))
+        screen.blit(end_score_text, (width / 2 - 145, 360))
+        screen.blit(best_score_text, (width / 2 + 35, 361))
+        pygame.display.flip()
+        clock.tick(48)
+
+
+def ask_reset_room():
     title_font = pygame.font.SysFont("calibri", 55, True)
     button_font = pygame.font.SysFont("calibri", 50, True)
     title_text = title_font.render("Are you sure?", False, (0, 0, 0))
     text1 = button_font.render("Yes", False, (0, 0, 0))
-    text2 = button_font.render("Discard", False, (0, 0, 0))
-    button1 = Button(text1, (width / 2 - 130, height / 2 + 80), (255, 16, 16), button_font, "Yes")
-    button2 = Button(text2, (width / 2 + 20, height / 2 + 80), (255, 16, 16), button_font, "Discard")
+    text2 = button_font.render("Cancel", False, (0, 0, 0))
+    button1 = Button(text1, (width / 2 - 120, height / 2 + 80), (255, 16, 16), button_font, "Yes")  # todo revise this
+    button2 = Button(text2, (width / 2 + 5, height / 2 + 80), (255, 16, 16), button_font, "Cancel")
     buttons = (button1, button2)
     background = pygame.Surface((380, 250), pygame.SRCALPHA)
 
@@ -331,15 +354,13 @@ def drawing():
 
     show_instructions()
     show_score(bird)
-    show_game_over(bird)
     show_fps()
-    # show_version()
 
     pygame.display.flip()
 
 
 def game_room():
-    global current_room, score, timer, restart_times, start, bird, pipes, dirts, clouds
+    global current_room, score, timer, start, bird, pipes, dirts, clouds
 
     timer = 120  # for spawning pipes
     score = 0
@@ -355,8 +376,6 @@ def game_room():
 
     game = Room()
 
-    check_data_file()
-
     while game.run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -367,11 +386,6 @@ def game_room():
                     event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
                 start = True
                 bird.up()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_r and not bird.in_air:
-                restart_times += 1
-                # print restart_times
-                game.exit()
-                current_room = game_room
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 game.exit()
                 current_room = main_room
@@ -380,10 +394,17 @@ def game_room():
             if pipe.hit(bird):
                 # print "HIT"
                 bird.in_air = False
+                game_over_room()
             elif pipe.score_up(bird) and bird.in_air:
                 # print "SCORE"
                 score += 1
                 # print score
+
+        if bird.y + bird.height >= height - 115:
+            bird.velocity = 0
+            bird.gravity = 0
+            bird.in_air = False
+            game_over_room()
 
         if start:
             timer -= 1
@@ -391,6 +412,7 @@ def game_room():
         drawing()
         clock.tick(65)
 
+    check_data_file()
     save_load_best()
     statistics()
 
@@ -420,7 +442,7 @@ def main_room():
     times_played = load_data()[1]
 
     while main.run:
-        for event in pygame.event.get():  # todo implement INSTRUCTIONS button
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 main.exit()
                 current_room = quit
@@ -431,6 +453,8 @@ def main_room():
                 elif main.button_pressed() == 1:
                     main.exit()
                     current_room = options_room
+                elif main.button_pressed() == 2:  # todo implement INSTRUCTIONS button
+                    pass
                 elif main.button_pressed() == 3:
                     main.exit()
                     current_room = quit
@@ -468,7 +492,7 @@ def options_room():
                 current_room = quit
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if options.button_pressed() == 0:
-                    ask_reset()
+                    ask_reset_room()
                 elif options.button_pressed() == 1:
                     pass
                 elif options.button_pressed() == 2:
@@ -495,16 +519,16 @@ restart_times = 0  # how many times the user restarts
 score_font = pygame.font.SysFont("calibri", 65, True)  # score
 instructions_font = pygame.font.SysFont("calibri", 18, True)  # instructions
 instructions_text = instructions_font.render("Press Spacebar or Up Arrow to get started.", False, (0, 0, 0))
-replay_font = pygame.font.SysFont("calibri", 35, True)  # replay
-replay_text1 = replay_font.render("Wanna try again?", False, (0, 0, 0))
-replay_text2 = replay_font.render("Press R to restart.", False, (0, 0, 0))
-end_score_font = pygame.font.SysFont("calibri", 32, True)  # end score
+# replay_font = pygame.font.SysFont("calibri", 35, True)  # replay
+# replay_text1 = replay_font.render("Wanna try again?", False, (0, 0, 0))
+# replay_text2 = replay_font.render("Press R to restart.", False, (0, 0, 0))
+end_score_font = pygame.font.SysFont("calibri", 40, True)  # end score
 game_over_font = pygame.font.SysFont("calibri", 70, True)  # game_over
 game_over_text = game_over_font.render("Game Over", False, (0, 0, 0))
-best_score_font = pygame.font.SysFont("calibri", 32, True)  # best score
+best_score_font = pygame.font.SysFont("calibri", 35, True)  # best score
 fps_font = pygame.font.SysFont("calibri", 15, True)  # fps
 ver_font = pygame.font.SysFont("calibri", 15, True)  # version
-background = pygame.Surface((400, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
+end_background = pygame.Surface((400, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
 
 current_room = main_room
 
