@@ -8,6 +8,7 @@ class Room(object):
         surface.blit(self.title, (x, y))
         for button in self.button_list:
             button.show(surface)
+            button.pressed()
 
     def button_pressed(self):
         for i, button in enumerate(self.button_list):
@@ -31,3 +32,4 @@ class MainMenu(Room):
         surface.blit(self.title, (x, y))
         for button in self.button_list:
             button.show(surface)
+            button.pressed()

@@ -10,13 +10,13 @@ class Button(object):
         self.antial = antial
         self.colors = colors
         self.highlight = False
-        self.width = font.size(actual_text)[0]
+        self.width = font.size(actual_text)[0] + 10
         self.height = font.size(actual_text)[1]
 
     def show(self, surface):
         pygame.draw.rect(surface, self.color, (self.x, self.y, self.width, self.height))
         text = self.font.render(self.actual_text, self.antial, self.colors[0 if not self.highlight else 1])
-        surface.blit(text, (self.x, self.y))
+        surface.blit(text, (self.x + 5, self.y + 2))
 
     def pressed(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -28,4 +28,5 @@ class Button(object):
             else:
                 self.highlight = False
         else:
+            self.highlight = False
             return False
