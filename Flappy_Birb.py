@@ -6,17 +6,17 @@ from random import randint, uniform
 
 version = "v0.4.0"
 
+
 pygame.init()
 
 display_info = pygame.display.Info()  # for deciding which resolution will the game have
 if display_info.current_h <= 800:  # checks if user's screen's height is or is not lower than 800
-    width = 580
-    height = 700
-    mode = 0  # scale for those with lower screen resolutions
+    SCL = 0.9  # scale for those with lower screen resolutions
 else:
-    width = 600
-    height = 750
-    mode = 1  # original scale
+    SCL = 1  # original scale
+
+width = int(600 * SCL)
+height = int(750 * SCL)
 
 # The system that I made for choosing the size of the objects is quite inefficient. I didn't bother changing it. But at least it works.
 
@@ -40,24 +40,17 @@ best_score_font = pygame.font.SysFont("calibri", 32, True)  # best score
 fps_font = pygame.font.SysFont("calibri", 15, True)  # fps
 ver_font = pygame.font.SysFont("calibri", 15, True)  # version
 
-end_surface = pygame.Surface((400 if mode == 1 else 380, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
+end_surface = pygame.Surface((400 * SCL, 410 * SCL), pygame.SRCALPHA)  # for ending description rectangle thingy
 
 class Player(object):
     def __init__(self):
-        if mode == 1:
-            self.x = 228
-            self.y = 338
-            self.width = 57
-            self.height = 50
-            self.up_force = -32
-            self.fly_path = [self.y, 360]
-        else:
-            self.x = 213
-            self.y = 313
-            self.width = 55
-            self.height = 48
-            self.up_force = -30.8
-            self.fly_path = [self.y, 338]
+        self.x = 228 * SCL
+        self.y = 338 * SCL
+        self.width = 57 * SCL
+        self.height = 50 * SCL
+        self.up_force = -32 * SCL
+        self.fly_path = [self.y, 360 * SCL]
+
         self.velocity = 0
         self.gravity = 1
         self.in_air = True
@@ -65,10 +58,10 @@ class Player(object):
 
     def show(self):
         pygame.draw.ellipse(screen, (255, 255, 50), (self.x, self.y, self.width, self.height))
-        pygame.draw.circle(screen, (250, 250, 250), (int(self.x) + 42, int(self.y) + 18), 13)  # eye
-        pygame.draw.ellipse(screen, (225, 110, 100), (self.x + 31, self.y + 29, 33, 19))  # mouth
-        pygame.draw.rect(screen, (60, 60, 60), (self.x + 46, self.y + 15, 4, 7))  # pupil
-        pygame.draw.ellipse(screen, (255, 255, 240), (self.x - 7, self.y + 12, 26, 24))  # wing
+        pygame.draw.circle(screen, (250, 250, 250), (int(self.x + 42 * SCL), int(self.y + 18 * SCL)), int(13 * SCL))  # eye
+        pygame.draw.ellipse(screen, (225, 110, 100), (self.x + 31 * SCL, self.y + 29 * SCL, 33 * SCL, 19 * SCL))  # mouth
+        pygame.draw.rect(screen, (60, 60, 60), (self.x + 46 * SCL, self.y + 15 * SCL, 4 * SCL, 7 * SCL))  # pupil
+        pygame.draw.ellipse(screen, (255, 255, 240), (self.x - 7 * SCL, self.y + 12 * SCL, 26 * SCL, 24 * SCL))  # wing
 
     def fall(self):
         if start:
@@ -76,7 +69,7 @@ class Player(object):
                 self.velocity += self.gravity
             self.velocity *= 0.9
             self.y += self.velocity
-            if self.y + self.height >= height - 115 if mode == 1 else self.y + self.height >= height - 100:
+            if self.y + self.height >= height - 115 * SCL:
                 self.velocity = 0
                 self.gravity = 0
                 self.in_air = False
@@ -100,18 +93,13 @@ class Player(object):
 class Pipe(object):
     def __init__(self):
         self.x = width + 350
-        if mode == 1:
-            self.width = 105
-            self.gap = 204
-            self.pipe_ground = 115
-            self.start_gap = randint(25, height - 25 - self.gap - self.pipe_ground)
-        else:
-            self.width = 97
-            self.gap = 188
-            self.pipe_ground = 100
-            self.start_gap = randint(20, height - 20 - self.gap - self.pipe_ground)
+        self.width = 105 * SCL
+        self.gap = 204 * SCL
+        self.pipe_ground = 115 * SCL
+        self.start_gap = uniform(25 * SCL, height - 25 * SCL - self.gap - self.pipe_ground)
+
         self.top_height = self.start_gap
-        self.bottom_height = height - self.start_gap - self.gap - self.pipe_ground
+        self.bottom_height = height - self.start_gap - self.gap - self.pipe_ground + 1
         if start:
             self.vel = 3.2
         else:
@@ -119,11 +107,11 @@ class Pipe(object):
 
     def show(self):
         pygame.draw.rect(screen, (50, 230, 50), (self.x, 0, self.width, self.top_height))  # top pipe
-        pygame.draw.rect(screen, (50, 230, 50), (
-            self.x, height - self.bottom_height - self.pipe_ground, self.width, self.bottom_height))  # bottom pipe
+        pygame.draw.rect(screen, (50, 230, 50), (self.x, height - self.bottom_height - self.pipe_ground, self.width,
+                                                 self.bottom_height))  # bottom pipe
         pygame.draw.rect(screen, (43, 223, 43), (self.x - 4, self.start_gap - 50, self.width + 8, 50))  # top cap
-        pygame.draw.rect(screen, (43, 223, 43),
-                         (self.x - 4, height - self.bottom_height - self.pipe_ground, self.width + 8, 50))  # bottom cap
+        pygame.draw.rect(screen, (43, 223, 43), (self.x - 4, height - self.bottom_height - self.pipe_ground,
+                                                 self.width + 8, 50))  # bottom cap
         pygame.draw.rect(screen, (240, 252, 152), (0, height - self.pipe_ground, width, self.pipe_ground))  # ground
         pygame.draw.rect(screen, (50, 250, 50), (0, height - self.pipe_ground, width, 20))  # grass
 
@@ -153,14 +141,9 @@ class Pipe(object):
 
 class Dirt(object):
     def __init__(self):
-        if mode == 1:
-            self.y = randint(height - 95, height - 5)
-            self.width = randint(4, 15)
-            self.height = randint(4, 11)
-        else:
-            self.y = randint(height - 80, height - 3)
-            self.width = randint(4, 14)
-            self.height = randint(4, 10)
+        self.y = uniform(height - 95 * SCL, height - 5 * SCL)
+        self.width = uniform(4, 15 * SCL)
+        self.height = uniform(4, 11 * SCL)
         self.x = randint(0, width - 1)
         self.color = (randint(114, 171), randint(76, 113), randint(26, 83))
         self.vel = 3.2
@@ -180,14 +163,9 @@ class Dirt(object):
 
 class Cloud(object):
     def __init__(self):
-        if mode == 1:
-            self.y = randint(-8, 80)
-            self.width = randint(80, 170)
-            self.height = randint(40, 70)
-        else:
-            self.y = randint(-6, 75)
-            self.width = randint(72, 157)
-            self.height = randint(35, 64)
+        self.y = uniform(-8 * SCL, 80) * SCL
+        self.width = uniform(80 * SCL, 170 * SCL)
+        self.height = uniform(40 * SCL, 70 * SCL)
         self.x = randint(-10, width + 10)
         self.vel = uniform(0.1, 0.4)
         self.color = (randint(247, 255), randint(247, 255), 255, 180)
@@ -198,7 +176,7 @@ class Cloud(object):
 
     def show(self):
         # pygame.draw.ellipse(screen, self.color, (self.x, self.y, self.width, self.height), 0)
-        pygame.gfxdraw.filled_ellipse(screen, int(self.x), int(self.y), self.width, self.height, self.color)
+        pygame.gfxdraw.filled_ellipse(screen, int(self.x), int(self.y), int(self.width), int(self.height), self.color)
 
     def offscreen(self):
         if self.x < 0 - self.width:
@@ -289,7 +267,7 @@ def drawing():
 
     screen.fill((150, 200, 255))
 
-    if bird.in_air and timer == 0 if mode == 1 else bird.in_air and timer == 10:
+    if bird.in_air and timer == 0 if SCL == 1 else bird.in_air and timer == 10:
         if start:
             pipes.append(Pipe())
         timer = 120
@@ -300,14 +278,9 @@ def drawing():
         cloud.move()
         cloud.reality(bird)
         if cloud.offscreen() and bird.in_air:
-            if mode == 1:
-                cloud.y = randint(-8, 80)
-                cloud.width = randint(80, 170)
-                cloud.height = randint(40, 70)
-            else:
-                cloud.y = randint(-6, 75)
-                cloud.width = randint(72, 157)
-                cloud.height = randint(35, 64)
+            cloud.y = uniform(-8 * SCL, 80 * SCL)
+            cloud.width = uniform(80 * SCL, 170 * SCL)
+            cloud.height = uniform(40 * SCL, 70 * SCL)
             cloud.x = randint(width + 160, width + 550)
             cloud.vel = uniform(0.1, 0.4)
             cloud.color = (randint(247, 255), randint(247, 255), 255, 180)
@@ -322,14 +295,9 @@ def drawing():
         dirt.show()
         dirt.move(bird)
         if dirt.offscreen():
-            if mode == 1:
-                dirt.y = randint(height - 95, height - 5)
-                dirt.width = randint(4, 15)
-                dirt.height = randint(4, 11)
-            else:
-                dirt.y = randint(height - 80, height - 3)
-                dirt.width = randint(4, 14)
-                dirt.height = randint(4, 10)
+            dirt.y = uniform(height - 95 * SCL, height - 5 * SCL)
+            dirt.width = uniform(4, 15 * SCL)
+            dirt.height = uniform(4, 11 * SCL)
             dirt.x = width + randint(10, 80)
             dirt.color = (randint(114, 171), randint(76, 113), randint(26, 83))
 
