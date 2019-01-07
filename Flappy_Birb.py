@@ -18,10 +18,10 @@ class Player(object):
         self.y = 338
         self.width = 57
         self.height = 50
-        self.up_force = -33.5
+        self.up_force = -33.8
         self.fly_path = [self.y, 360]
         self.velocity = 0
-        self.gravity = 1.05
+        self.gravity = 1.07
         self.in_air = True
         self.fly_speed = 0.36
 
@@ -40,7 +40,7 @@ class Player(object):
             self.y += self.velocity
 
     def up(self):
-        if height - 130 >= bird.y > 0 and bird.in_air:
+        if height - 130 >= self.y > 0 and self.in_air:
             self.velocity += self.up_force
 
     def fly(self):
@@ -258,7 +258,7 @@ def show_version():
     screen.blit(ver_text, (width - 45, height - 20))
 
 
-def game_over_room():
+def game_over_room(bird_):
     global current_room, restart_times
 
     end_score_text = end_score_font.render("Score: " + str(score), True, (0, 0, 0))
@@ -276,7 +276,7 @@ def game_over_room():
             if event.type == pygame.QUIT:
                 game_over.exit()
                 current_room = quit
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_r and not bird.in_air:
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_r and not bird_.in_air:
                 restart_times += 1
                 # print restart_times
                 game_over.exit()
@@ -381,11 +381,13 @@ def info_room():
 
     title_font = pygame.font.SysFont("calibri", 80, True)
     button_font = pygame.font.SysFont("calibri", 60, True)
-    that_font = pygame.font.SysFont("calibri", 25, True)
+    that_font = pygame.font.SysFont("calibri", 40, True)
+    that_font2 = pygame.font.SysFont("calibri", 15, True)
     title_text = title_font.render("Info", True, (0, 0, 0))
-    txt1 = that_font.render("", True, (0, 0, 0))
-    txt2 = that_font.render("", True, (0, 0, 0))
-    txt3 = that_font.render("", True, (0, 0, 0))
+    txt1 = that_font.render("Flappy Bird", True, (0, 0, 0))
+    txt2 = that_font.render("clone", True, (0, 0, 0))
+    txt3 = that_font.render("by Simon", True, (0, 0, 0))
+    txt4 = that_font2.render("I do not expect anyone to play this.", True, (0, 0, 0))
     colors = ((0, 0, 0), (235, 212, 222))
     button = Button((width / 2 + 40, height / 2 + 225), (255, 16, 16), button_font, "BACK", colors, True)
     buttons = (button,)
@@ -402,30 +404,31 @@ def info_room():
                     info.exit()
                     current_room = options_room
 
-        info.show(screen, (240, 200))
-        screen.blit(txt1, (20, 295))
-        screen.blit(txt2, (20, 330))
-        screen.blit(txt3, (20, 400))
+        info.show(screen, (240, 170))
+        screen.blit(txt1, (width / 2 - 79, 310))
+        screen.blit(txt2, (width / 2 - 34, 370))
+        screen.blit(txt3, (width / 2 - 63, 430))
+        screen.blit(txt4, (width / 2 + 20, 520))
         pygame.display.flip()
         clock.tick(48)
 
 
-def drawing():
+def drawing(bird_, pipes_, dirts_, clouds_):
     global timer
 
     screen.fill((150, 200, 255))
 
-    if bird.in_air and timer == 0:
+    if bird_.in_air and timer == 0:
         if start:
-            pipes.append(Pipe())
+            pipes_.append(Pipe())
         timer = 120
         # print len(pipes)
 
-    for cloud in reversed(clouds):  # clouds
+    for cloud in reversed(clouds_):  # clouds
         cloud.show()
         cloud.move()
-        cloud.reality(bird)
-        if cloud.offscreen() and bird.in_air:  # todo update cloud class
+        cloud.reality(bird_)
+        if cloud.offscreen() and bird_.in_air:
             cloud.y = randint(-8, 80)
             cloud.width = randint(80, 170)
             cloud.height = randint(40, 70)
@@ -433,25 +436,25 @@ def drawing():
             cloud.vel = uniform(0.1, 0.4)
             cloud.color = (randint(247, 255), randint(247, 255), 255, 180)
 
-    for pipe in reversed(pipes):  # pipes
+    for pipe in reversed(pipes_):  # pipes
         pipe.show()
-        pipe.move(bird)
+        pipe.move(bird_)
         if pipe.offscreen():
-            del pipes[1]
+            del pipes_[1]
 
-    for dirt in reversed(dirts):  # dirts
+    for dirt in reversed(dirts_):  # dirts
         dirt.show()
-        dirt.move(bird)
+        dirt.move(bird_)
         if dirt.offscreen():
-            dirt.y = randint(height - 95, height - 5)  # todo update dirt class
+            dirt.y = randint(height - 95, height - 5)
             dirt.width = randint(4, 15)
             dirt.height = randint(4, 11)
             dirt.x = width + randint(10, 80)
             dirt.color = (randint(114, 171), randint(76, 113), randint(26, 83))
 
-    bird.show()
-    bird.fly()
-    bird.fall()
+    bird_.show()
+    bird_.fly()
+    bird_.fall()
 
     show_instructions()
     show_score()
@@ -461,7 +464,7 @@ def drawing():
 
 
 def game_room():
-    global current_room, score, timer, start, bird, pipes, dirts, clouds
+    global current_room, score, timer, start
 
     timer = 120  # for spawning pipes
     score = 0
@@ -496,7 +499,7 @@ def game_room():
                 pygame.time.wait(200)
                 # print "HIT"
                 bird.in_air = False
-                game_over_room()
+                game_over_room(bird)
                 game.exit()
             elif pipe.score_up(bird) and bird.in_air:
                 score += 1
@@ -508,13 +511,13 @@ def game_room():
             bird.gravity = 0
             pygame.time.wait(200)
             bird.in_air = False
-            game_over_room()
+            game_over_room(bird)
             game.exit()
 
         if start:
             timer -= 1
 
-        drawing()
+        drawing(bird, pipes, dirts, clouds)
         clock.tick(65)
 
     check_data_file()
