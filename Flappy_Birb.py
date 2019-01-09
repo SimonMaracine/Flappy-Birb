@@ -2,11 +2,12 @@
 
 from engine.room import Room, MainMenu
 from engine.room_button import Button
+from engine.useful_functions import load_image
 import pygame
 import pygame.gfxdraw
-from random import randint, uniform
+from random import randint
 
-version = "v0.4.0"
+version = "v1.0.0"
 width = 600
 height = 750
 running = True
@@ -77,8 +78,6 @@ class Pipe(object):
         pygame.draw.rect(screen, (43, 223, 43), (self.x - 4, self.start_gap - 50, self.width + 8, 50))  # top cap
         pygame.draw.rect(screen, (43, 223, 43), (self.x - 4, height - self.bottom_height - self.pipe_ground,
                                                  self.width + 8, 50))  # bottom cap
-        pygame.draw.rect(screen, (240, 252, 152), (0, height - self.pipe_ground, width, self.pipe_ground))  # ground
-        pygame.draw.rect(screen, (50, 250, 50), (0, height - self.pipe_ground, width, 20))  # grass
 
     def move(self, bird_):
         if bird_.in_air:
@@ -105,56 +104,26 @@ class Pipe(object):
             return False
 
 
-class Dirt(object):
+class Ground(object):
     def __init__(self):
-        self.y = randint(height - 95, height - 5)
-        self.width = randint(4, 15)
-        self.height = randint(4, 11)
-        self.x = randint(0, width - 1)
-        self.color = (randint(114, 171), randint(76, 113), randint(26, 83))
+        self.x = 0
+        self.height = 105
         self.vel = 3.2
 
     def show(self):
-        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
-
-    def move(self, bird_):
-        if bird_.in_air:
-            self.x -= self.vel
-
-    def offscreen(self):
-        if self.x < 0 - self.width:
-            return True
-        else:
-            return False
-
-
-class Cloud(object):
-    def __init__(self):
-        self.y = randint(-8, 80)
-        self.width = randint(80, 170)
-        self.height = randint(40, 70)
-        self.x = randint(-10, width + 10)
-        self.vel = uniform(0.1, 0.4)
-        self.color = (randint(247, 255), randint(247, 255), 255, 180)
-        self.limit = 1
+        screen.blit(ground, (self.x, height - self.height))
+        screen.blit(ground, (width + self.x, height - self.height))
+        if self.offscreen():
+            self.x = -1
 
     def move(self):
         self.x -= self.vel
 
-    def show(self):
-        # pygame.draw.ellipse(screen, self.color, (self.x, self.y, self.width, self.height), 0)
-        pygame.gfxdraw.filled_ellipse(screen, int(self.x), int(self.y), self.width, self.height, self.color)
-
     def offscreen(self):
-        if self.x < 0 - self.width:
+        if width + self.x < 0:
             return True
         else:
             return False
-
-    def reality(self, bird_):
-        if not bird_.in_air and self.limit == 1:
-            self.limit -= 1
-            self.vel *= 0.1
 
 
 def check_data_file():  # checks if the file exists
@@ -413,10 +382,11 @@ def info_room():
         clock.tick(48)
 
 
-def drawing(bird_, pipes_, dirts_, clouds_):
+def drawing(bird_, pipes_, ground_):
     global timer
 
-    screen.fill((150, 200, 255))
+    # screen.fill((0, 0, 0))
+    screen.blit(background, (0, 0))
 
     if bird_.in_air and timer == 0:
         if start:
@@ -424,33 +394,14 @@ def drawing(bird_, pipes_, dirts_, clouds_):
         timer = 120
         # print len(pipes)
 
-    for cloud in reversed(clouds_):  # clouds
-        cloud.show()
-        cloud.move()
-        cloud.reality(bird_)
-        if cloud.offscreen() and bird_.in_air:
-            cloud.y = randint(-8, 80)
-            cloud.width = randint(80, 170)
-            cloud.height = randint(40, 70)
-            cloud.x = randint(width + 160, width + 550)
-            cloud.vel = uniform(0.1, 0.4)
-            cloud.color = (randint(247, 255), randint(247, 255), 255, 180)
-
     for pipe in reversed(pipes_):  # pipes
         pipe.show()
         pipe.move(bird_)
         if pipe.offscreen():
             del pipes_[1]
 
-    for dirt in reversed(dirts_):  # dirts
-        dirt.show()
-        dirt.move(bird_)
-        if dirt.offscreen():
-            dirt.y = randint(height - 95, height - 5)
-            dirt.width = randint(4, 15)
-            dirt.height = randint(4, 11)
-            dirt.x = width + randint(10, 80)
-            dirt.color = (randint(114, 171), randint(76, 113), randint(26, 83))
+    ground_.show()
+    ground_.move()
 
     bird_.show()
     bird_.fly()
@@ -471,12 +422,7 @@ def game_room():
     start = False  # if player starts to jump
     bird = Player()
     pipes = [Pipe()]
-    dirts = []
-    clouds = []
-    for i in range(7):
-        dirts.append(Dirt())
-    for i in range(4):
-        clouds.append(Cloud())
+    ground = Ground()
 
     game = Room()
 
@@ -517,7 +463,7 @@ def game_room():
         if start:
             timer -= 1
 
-        drawing(bird, pipes, dirts, clouds)
+        drawing(bird, pipes, ground)
         clock.tick(65)
 
     check_data_file()
@@ -617,7 +563,7 @@ def quit():
 
 
 pygame.init()
-pygame.display.set_icon(pygame.image.load("Data\\BirbIcon.png"))
+pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon.png"))
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Flappy Birb")
 clock = pygame.time.Clock()
@@ -633,7 +579,12 @@ fps_font = pygame.font.SysFont("calibri", 15, True)  # fps
 ver_font = pygame.font.SysFont("calibri", 15, True)  # version
 end_background = pygame.Surface((400, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
 
-current_room = main_room
+background = load_image("Data\\Assets\\Background.png").convert()
+background = pygame.transform.scale(background, (width, height - 95))
+ground = load_image("Data\\Assets\\Ground.png").convert()
+ground = pygame.transform.scale(ground, (width, 105))
+
+current_room = game_room
 
 while running:
     current_room()
