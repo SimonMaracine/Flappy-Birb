@@ -12,7 +12,6 @@ width = 600
 height = 750
 running = True
 
-
 class Player(object):
     def __init__(self):
         self.x = 228
@@ -25,13 +24,17 @@ class Player(object):
         self.gravity = 1.07
         self.in_air = True
         self.fly_speed = 0.36
+        self.sprite_count = 0
 
     def show(self):
-        pygame.draw.ellipse(screen, (255, 255, 50), (self.x, self.y, self.width, self.height))
-        pygame.draw.circle(screen, (250, 250, 250), (int(self.x) + 42, int(self.y) + 18), 13)  # eye
-        pygame.draw.ellipse(screen, (225, 110, 100), (self.x + 31, self.y + 29, 33, 19))  # mouth
-        pygame.draw.rect(screen, (60, 60, 60), (self.x + 46, self.y + 15, 4, 7))  # pupil
-        pygame.draw.ellipse(screen, (255, 255, 240), (self.x - 7, self.y + 12, 26, 24))  # wing
+        if self.sprite_count > 18:
+            self.sprite_count = 0
+        if not start:
+            screen.blit(bird2, (self.x - 6, self.y - 1))
+        else:
+            screen.blit(bird_sprites[self.sprite_count / 7], (self.x - 10, self.y - 10))
+            self.sprite_count += 1
+        # pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width + 3, self.height), 2)
 
     def fall(self):
         if start:
@@ -56,7 +59,6 @@ class Player(object):
             else:
                 self.fly_speed *= -1
 
-
 class Pipe(object):
     def __init__(self):
         self.x = width + 350
@@ -72,12 +74,8 @@ class Pipe(object):
             self.vel = 0
 
     def show(self):
-        pygame.draw.rect(screen, (50, 230, 50), (self.x, 0, self.width, self.top_height))  # top pipe
-        pygame.draw.rect(screen, (50, 230, 50), (self.x, height - self.bottom_height - self.pipe_ground,
-                                                 self.width, self.bottom_height))  # bottom pipe
-        pygame.draw.rect(screen, (43, 223, 43), (self.x - 4, self.start_gap - 50, self.width + 8, 50))  # top cap
-        pygame.draw.rect(screen, (43, 223, 43), (self.x - 4, height - self.bottom_height - self.pipe_ground,
-                                                 self.width + 8, 50))  # bottom cap
+        screen.blit(pipe1, (self.x - 4, self.start_gap - height))
+        screen.blit(pipe2, (self.x - 4, self.start_gap + self.gap))
 
     def move(self, bird_):
         if bird_.in_air:
@@ -91,7 +89,7 @@ class Pipe(object):
 
     def hit(self, bird_):
         if bird_.y + 8 < self.top_height or bird_.y + bird_.height - 7 > height - self.bottom_height - self.pipe_ground:
-            if bird_.x + bird_.width - 4 > self.x and bird_.x + 4 < self.x + self.width:
+            if bird_.x - 4 + bird_.width > self.x and bird_.x + 4 < self.x + self.width + 3:
                 return True
         else:
             return False
@@ -102,7 +100,6 @@ class Pipe(object):
             return True
         else:
             return False
-
 
 class Ground(object):
     def __init__(self):
@@ -125,7 +122,6 @@ class Ground(object):
         else:
             return False
 
-
 def check_data_file():  # checks if the file exists
     try:
         open("Data\\Data.txt")  # todo check to see if the file is really closed
@@ -134,7 +130,6 @@ def check_data_file():  # checks if the file exists
         data_file.write("000@0")
         data_file.close()
         print "Data file not found; creating a new one."
-
 
 def save_load_best():  # saves and loads the best score
     score_ = score
@@ -164,7 +159,6 @@ def save_load_best():  # saves and loads the best score
             else:
                 return str(prev_best_score)
 
-
 def statistics():  # saves how many times the user has played
     with open("Data\\Data.txt", "r+") as data_file:
         try:
@@ -182,7 +176,6 @@ def statistics():  # saves how many times the user has played
             data_file.write(str(prev_times_played))
             return prev_times_played
 
-
 def load_data():
     with open("Data\\Data.txt", "r") as data_file:
         try:
@@ -198,34 +191,28 @@ def load_data():
             times_played = data_file.read()[4:]
             return best_score, times_played
 
-
 def erase_data():
     with open("Data\\Data.txt", "w") as data_file:
         data_file.write("000@0")
     print "Data erased."
-
 
 def show_score():  # shows the score while playing
     if start:
         score_text = score_font.render(str(score), True, (0, 0, 0))
         screen.blit(score_text, (width / 2 - 10, 130))
 
-
 def show_instructions():  # shows the instructions at the beginning (only once)
     if not start and restart_times < 1:
         screen.blit(instructions_text, (width / 2 - 140, height / 2 + 150))
-
 
 def show_fps():
     fps = clock.get_fps()
     fps_text = fps_font.render("FPS: " + str(int(fps * 1000 + 0.5) / 1000.0), False, (0, 0, 0))
     screen.blit(fps_text, (10, height - 20))
 
-
 def show_version():
     ver_text = ver_font.render(version, False, (0, 0, 0))
     screen.blit(ver_text, (width - 45, height - 20))
-
 
 def game_over_room(bird_):
     global current_room, restart_times
@@ -270,7 +257,6 @@ def game_over_room(bird_):
         pygame.display.flip()
         clock.tick(48)
 
-
 def ask_reset_room():
     global current_room
 
@@ -304,7 +290,6 @@ def ask_reset_room():
         pygame.display.flip()
         clock.tick(48)
     return q
-
 
 def instructions_room():
     global current_room
@@ -344,7 +329,6 @@ def instructions_room():
         pygame.display.flip()
         clock.tick(48)
 
-
 def info_room():
     global current_room
 
@@ -381,7 +365,6 @@ def info_room():
         pygame.display.flip()
         clock.tick(48)
 
-
 def drawing(bird_, pipes_, ground_):
     global timer
 
@@ -412,7 +395,6 @@ def drawing(bird_, pipes_, ground_):
     show_fps()
 
     pygame.display.flip()
-
 
 def game_room():
     global current_room, score, timer, start
@@ -452,7 +434,7 @@ def game_room():
                 # print "SCORE"
                 # print score
 
-        if bird.y + bird.height >= height - 105:
+        if bird.y + bird.height >= height - 95:
             bird.velocity = 0
             bird.gravity = 0
             pygame.time.wait(200)
@@ -469,7 +451,6 @@ def game_room():
     check_data_file()
     save_load_best()
     statistics()
-
 
 def main_room():
     global current_room
@@ -520,7 +501,6 @@ def main_room():
         pygame.display.flip()
         clock.tick(48)
 
-
 def options_room():
     global current_room
 
@@ -556,11 +536,9 @@ def options_room():
         pygame.display.flip()
         clock.tick(48)
 
-
 def quit():
     global running
     running = False
-
 
 pygame.init()
 pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon.png"))
@@ -583,6 +561,20 @@ background = load_image("Data\\Assets\\Background.png").convert()
 background = pygame.transform.scale(background, (width, height - 95))
 ground = load_image("Data\\Assets\\Ground.png").convert()
 ground = pygame.transform.scale(ground, (width, 105))
+pipe = load_image("Data\\Assets\\Pipe.png").convert_alpha()
+pipe1 = pygame.transform.scale(pipe, (113, height))
+pipe2 = pygame.transform.flip(pipe1, False, True)
+bird1 = load_image("Data\\Assets\\Bird1.png").convert_alpha()
+bird1 = pygame.transform.scale(bird1, (73, 52))
+bird2 = load_image("Data\\Assets\\Bird2.png").convert_alpha()
+bird2 = pygame.transform.scale(bird2, (73, 52))
+bird3 = load_image("Data\\Assets\\Bird3.png").convert_alpha()
+bird3 = pygame.transform.scale(bird3, (73, 52))
+
+bird_sprite1 = pygame.transform.rotate(bird1, 22)
+bird_sprite2 = pygame.transform.rotate(bird2, 22)
+bird_sprite3 = pygame.transform.rotate(bird3, 22)
+bird_sprites = (bird_sprite1, bird_sprite2, bird_sprite3)
 
 current_room = game_room
 
