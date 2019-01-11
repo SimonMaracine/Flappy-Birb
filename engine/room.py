@@ -1,8 +1,11 @@
+from pygame import time
+
 class Room(object):
-    def __init__(self, title=None, button_list=None):
+    def __init__(self, title=None, button_list=None, sound=None):
         self.run = True
         self.title = title
         self.button_list = button_list
+        self.sound = sound
 
     def show(self, surface, (x, y)):
         surface.blit(self.title, (x, y))
@@ -13,6 +16,8 @@ class Room(object):
     def button_pressed(self):
         for i, button in enumerate(self.button_list):
             if button.pressed():
+                if self.sound is not None:
+                    self.sound.play()
                 return i
         return 16
 
@@ -21,11 +26,12 @@ class Room(object):
 
 
 class MainMenu(Room):
-    def __init__(self, title, bg_color, button_list):
+    def __init__(self, title, bg_color, button_list, sound):
         super(MainMenu, self).__init__()
         self.title = title
         self.bg_color = bg_color
         self.button_list = button_list
+        self.sound = sound
 
     def show(self, surface, (x, y)):
         surface.fill(self.bg_color)

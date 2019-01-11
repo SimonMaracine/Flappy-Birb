@@ -225,7 +225,7 @@ def game_over_room(bird_):
     button2 = Button((width / 2 + 55, height / 2 + 80), (255, 16, 16), button_font, "Exit", colors, True)
     buttons = (button1, button2)
 
-    game_over = Room(game_over_text, buttons)
+    game_over = Room(game_over_text, buttons, button_sound)
 
     while game_over.run:
         for event in pygame.event.get():
@@ -270,7 +270,7 @@ def ask_reset_room():
     background = pygame.Surface((380, 250), pygame.SRCALPHA)
     q = True  # if the exit button is pressed, 'q' is set to False
 
-    ask_reset = Room(title_text, buttons)
+    ask_reset = Room(title_text, buttons, button_sound)
 
     while ask_reset.run:
         for event in pygame.event.get():
@@ -308,7 +308,7 @@ def instructions_room():
     button = Button((width / 2 + 40, height / 2 + 225), (255, 16, 16), button_font, "BACK", colors, True)
     buttons = (button,)
 
-    instructions = MainMenu(title_text, (200, 200, 16), buttons)
+    instructions = MainMenu(title_text, (200, 200, 16), buttons, button_sound)
 
     while instructions.run:
         for event in pygame.event.get():
@@ -345,7 +345,7 @@ def info_room():
     button = Button((width / 2 + 40, height / 2 + 225), (255, 16, 16), button_font, "BACK", colors, True)
     buttons = (button,)
 
-    info = MainMenu(title_text, (200, 200, 16), buttons)
+    info = MainMenu(title_text, (200, 200, 16), buttons, button_sound)
 
     while info.run:
         for event in pygame.event.get():
@@ -416,6 +416,7 @@ def game_room():
                 # print "QUIT"
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE or event.type == pygame.KEYDOWN and event.key == pygame.K_UP or \
                     event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
+                flap_sound.play()
                 start = True
                 bird.up()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -424,12 +425,14 @@ def game_room():
 
         for pipe in pipes:  # checking for pipe-bird events
             if pipe.hit(bird):
+                hit_sound.play()
                 pygame.time.wait(200)
                 # print "HIT"
                 bird.in_air = False
                 game_over_room(bird)
                 game.exit()
             elif pipe.score_up(bird) and bird.in_air:
+                ding_sound.play()
                 score += 1
                 # print "SCORE"
                 # print score
@@ -437,6 +440,7 @@ def game_room():
         if bird.y + bird.height >= height - 95:
             bird.velocity = 0
             bird.gravity = 0
+            hit_sound.play()
             pygame.time.wait(200)
             bird.in_air = False
             game_over_room(bird)
@@ -467,7 +471,7 @@ def main_room():
     button4 = Button((width / 2 - 90, height / 2 + 225), (255, 16, 16), button_font, "QUIT", colors, True)
     buttons = (button1, button2, button3, button4)
 
-    main = MainMenu(title_text, (230, 230, 16), buttons)
+    main = MainMenu(title_text, (230, 230, 16), buttons, button_sound)
 
     check_data_file()
     best_score = str(load_data()[0])
@@ -513,7 +517,7 @@ def options_room():
     button3 = Button((width / 2 - 90, height / 2 + 225), (255, 16, 16), button_font, "BACK", colors, True)
     buttons = (button1, button2, button3)
 
-    options = MainMenu(title_text, (200, 200, 16), buttons)
+    options = MainMenu(title_text, (200, 200, 16), buttons, button_sound)
 
     while options.run:
         for event in pygame.event.get():
@@ -538,8 +542,10 @@ def options_room():
 
 def quit():
     global running
+    pygame.time.delay(120)
     running = False
 
+pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon.png"))
 screen = pygame.display.set_mode((width, height))
@@ -570,13 +576,16 @@ bird2 = load_image("Data\\Assets\\Bird2.png").convert_alpha()
 bird2 = pygame.transform.scale(bird2, (73, 52))
 bird3 = load_image("Data\\Assets\\Bird3.png").convert_alpha()
 bird3 = pygame.transform.scale(bird3, (73, 52))
-
 bird_sprite1 = pygame.transform.rotate(bird1, 22)
 bird_sprite2 = pygame.transform.rotate(bird2, 22)
 bird_sprite3 = pygame.transform.rotate(bird3, 22)
 bird_sprites = (bird_sprite1, bird_sprite2, bird_sprite3)
+button_sound = pygame.mixer.Sound("Data\\Sounds\\Button.wav")
+hit_sound = pygame.mixer.Sound("Data\\Sounds\\Hit.wav")
+flap_sound = pygame.mixer.Sound("Data\\Sounds\\Flap.wav")
+ding_sound = pygame.mixer.Sound("Data\\Sounds\\Ding.wav")
 
-current_room = game_room
+current_room = main_room
 
 while running:
     current_room()
