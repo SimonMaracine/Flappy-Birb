@@ -4,7 +4,6 @@ from engine.room import Room, MainMenu
 from engine.room_button import Button
 from engine.useful_functions import load_image
 import pygame
-import pygame.gfxdraw
 from random import randint
 
 version = "v1.0.0"
@@ -547,7 +546,7 @@ def quit():
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
-pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon.png"))
+pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon2.png"))
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Flappy Birb")
 clock = pygame.time.Clock()
@@ -563,8 +562,8 @@ fps_font = pygame.font.SysFont("calibri", 15, True)  # fps
 ver_font = pygame.font.SysFont("calibri", 15, True)  # version
 end_background = pygame.Surface((400, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
 
-background = load_image("Data\\Assets\\Background.png").convert()
-background = pygame.transform.scale(background, (width, height - 95))
+background = load_image("Data\\Assets\\Background2.png").convert()
+background = pygame.transform.scale(background, (width, height - 85))
 ground = load_image("Data\\Assets\\Ground.png").convert()
 ground = pygame.transform.scale(ground, (width, 105))
 pipe = load_image("Data\\Assets\\Pipe.png").convert_alpha()
