@@ -562,7 +562,7 @@ fps_font = pygame.font.SysFont("calibri", 15, True)  # fps
 ver_font = pygame.font.SysFont("calibri", 15, True)  # version
 end_background = pygame.Surface((400, 410), pygame.SRCALPHA)  # for ending description rectangle thingy
 
-background = load_image("Data\\Assets\\Background2.png").convert()
+background = load_image("Data\\Assets\\Background.png").convert()
 background = pygame.transform.scale(background, (width, height - 85))
 ground = load_image("Data\\Assets\\Ground.png").convert()
 ground = pygame.transform.scale(ground, (width, 105))

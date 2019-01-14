@@ -7,4 +7,3 @@ def load_image(img):
         print "Could not find '%s'." % img
     else:
         return img
-    return None
