@@ -11,6 +11,7 @@ width = 600
 height = 750
 running = True
 
+
 class Player(object):
     def __init__(self):
         self.x = 228
@@ -58,6 +59,7 @@ class Player(object):
             else:
                 self.fly_speed *= -1
 
+
 class Pipe(object):
     def __init__(self):
         self.x = width + 350
@@ -100,6 +102,7 @@ class Pipe(object):
         else:
             return False
 
+
 class Ground(object):
     def __init__(self):
         self.x = 0
@@ -121,6 +124,7 @@ class Ground(object):
         else:
             return False
 
+
 def check_data_file():  # checks if the file exists
     try:
         open("Data\\Data.txt")  # todo check to see if the file is really closed
@@ -129,6 +133,7 @@ def check_data_file():  # checks if the file exists
         data_file.write("000@0")
         data_file.close()
         print "Data file not found; creating a new one."
+
 
 def save_load_best():  # saves and loads the best score
     score_ = score
@@ -158,6 +163,7 @@ def save_load_best():  # saves and loads the best score
             else:
                 return str(prev_best_score)
 
+
 def statistics():  # saves how many times the user has played
     with open("Data\\Data.txt", "r+") as data_file:
         try:
@@ -175,6 +181,7 @@ def statistics():  # saves how many times the user has played
             data_file.write(str(prev_times_played))
             return prev_times_played
 
+
 def load_data():
     with open("Data\\Data.txt", "r") as data_file:
         try:
@@ -190,28 +197,34 @@ def load_data():
             times_played = data_file.read()[4:]
             return best_score, times_played
 
+
 def erase_data():
     with open("Data\\Data.txt", "w") as data_file:
         data_file.write("000@0")
     print "Data erased."
+
 
 def show_score():  # shows the score while playing
     if start:
         score_text = score_font.render(str(score), True, (0, 0, 0))
         screen.blit(score_text, (width / 2 - 10, 130))
 
+
 def show_instructions():  # shows the instructions at the beginning (only once)
     if not start and restart_times < 1:
         screen.blit(instructions_text, (width / 2 - 140, height / 2 + 150))
+
 
 def show_fps():
     fps = clock.get_fps()
     fps_text = fps_font.render("FPS: " + str(int(fps * 1000 + 0.5) / 1000.0), False, (0, 0, 0))
     screen.blit(fps_text, (10, height - 20))
 
+
 def show_version():
     ver_text = ver_font.render(version, False, (0, 0, 0))
     screen.blit(ver_text, (width - 45, height - 20))
+
 
 def game_over_room(bird_):
     global current_room, restart_times
@@ -256,6 +269,7 @@ def game_over_room(bird_):
         pygame.display.flip()
         clock.tick(48)
 
+
 def ask_reset_room():
     global current_room
 
@@ -289,6 +303,7 @@ def ask_reset_room():
         pygame.display.flip()
         clock.tick(48)
     return q
+
 
 def instructions_room():
     global current_room
@@ -328,6 +343,7 @@ def instructions_room():
         pygame.display.flip()
         clock.tick(48)
 
+
 def info_room():
     global current_room
 
@@ -364,6 +380,7 @@ def info_room():
         pygame.display.flip()
         clock.tick(48)
 
+
 def drawing(bird_, pipes_, ground_):
     global timer
 
@@ -394,6 +411,7 @@ def drawing(bird_, pipes_, ground_):
     show_fps()
 
     pygame.display.flip()
+
 
 def game_room():
     global current_room, score, timer, start
@@ -455,6 +473,7 @@ def game_room():
     save_load_best()
     statistics()
 
+
 def main_room():
     global current_room
 
@@ -504,6 +523,7 @@ def main_room():
         pygame.display.flip()
         clock.tick(48)
 
+
 def options_room():
     global current_room
 
@@ -539,10 +559,12 @@ def options_room():
         pygame.display.flip()
         clock.tick(48)
 
+
 def quit():
     global running
     pygame.time.delay(120)
     running = False
+
 
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
