@@ -1,7 +1,8 @@
 # The code is quite bad. I know.
 
-from engine.room import Room, MainMenu
+from engine.room import Room, MainMenu, Settings
 from engine.room_button import Button
+from engine.room_slider import VolumeSlider
 from engine.useful_functions import load_image
 import pygame
 from random import randint
@@ -11,6 +12,7 @@ width = 600
 height = 750
 SCL = 1
 running = True
+
 
 class Player(object):
     def __init__(self):
@@ -204,6 +206,11 @@ def erase_data():
     print "Data erased."
 
 
+def change_sound_volume(slider):
+    for sound in all_sounds:
+        sound.set_volume(slider.volume)
+
+
 def show_score():  # shows the score while playing
     if start:
         score_text = score_font.render(str(score), True, (0, 0, 0))
@@ -381,6 +388,42 @@ def info_room():
         clock.tick(48)
 
 
+def sound_room():
+    global current_room
+
+    title_font = pygame.font.SysFont("calibri", 80, True)
+    button_font = pygame.font.SysFont("calibri", 60, True)
+    title_text = title_font.render("Volume", True, (0, 0, 0))
+    colors = ((0, 0, 0), (235, 212, 222))
+    button1 = Button((width / 2 - 260 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Save", colors, True)
+    button2 = Button((width / 2 - 120 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Cancel", colors, True)
+    button3 = Button((width / 2 + 100 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Reset", colors, True)
+    slider = VolumeSlider((width / 2 - 200, height / 2 + 60), (255, 16, 16), colors)
+    buttons = (button1, button2, button3)
+    sliders = (slider,)
+
+    sound = Settings(title_text, (200, 200, 16), buttons, button_sound, sliders)
+
+    while sound.run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sound.exit()
+                current_room = quit
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if sound.button_pressed() == 0:
+                    change_sound_volume(slider)
+                    sound.exit()
+                    current_room = options_room
+                elif sound.button_pressed() == 1:
+                    sound.exit()
+                    current_room = options_room
+                elif sound.button_pressed() == 2:  # todo save sound volume!
+                    slider.bar_length = 388
+
+        sound.show(screen, (200 * SCL, 250 * SCL))
+        pygame.display.flip()
+        clock.tick(48)
+
 def drawing(bird_, pipes_, ground_):
     global timer
 
@@ -531,10 +574,11 @@ def options_room():
     button_font = pygame.font.SysFont("calibri", 60, True)
     title_text = title_font.render("Options", True, (0, 0, 0))
     colors = ((0, 0, 0), (235, 212, 222))
-    button1 = Button((width / 2 - 90 * SCL, height / 2 + 75 * SCL), (255, 16, 16), button_font, "RESET DATA", colors, True)
-    button2 = Button((width / 2 - 90 * SCL, height / 2 + 150 * SCL), (255, 16, 16), button_font, "INFO", colors, True)
-    button3 = Button((width / 2 - 90 * SCL, height / 2 + 225 * SCL), (255, 16, 16), button_font, "BACK", colors, True)
-    buttons = (button1, button2, button3)
+    button1 = Button((width / 2 - 90 * SCL, height / 2), (255, 16, 16), button_font, "RESET DATA", colors, True)
+    button2 = Button((width / 2 - 90 * SCL, height / 2 + 75 * SCL), (255, 16, 16), button_font, "INFO", colors, True)
+    button3 = Button((width / 2 - 90 * SCL, height / 2 + 150 * SCL), (255, 16, 16), button_font, "VOLUME", colors, True)
+    button4 = Button((width / 2 - 90 * SCL, height / 2 + 225 * SCL), (255, 16, 16), button_font, "BACK", colors, True)
+    buttons = (button1, button2, button3, button4)
 
     options = MainMenu(title_text, (200, 200, 16), buttons, button_sound)
 
@@ -553,9 +597,12 @@ def options_room():
                     current_room = info_room
                 elif options.button_pressed() == 2:
                     options.exit()
+                    current_room = sound_room
+                elif options.button_pressed() == 3:
+                    options.exit()
                     current_room = main_room
 
-        options.show(screen, (225 * SCL, 270 * SCL))
+        options.show(screen, (225 * SCL, 230 * SCL))
         pygame.display.flip()
         clock.tick(48)
 
@@ -610,6 +657,7 @@ button_sound = pygame.mixer.Sound("Data\\Sounds\\Button.wav")
 hit_sound = pygame.mixer.Sound("Data\\Sounds\\Hit.wav")
 flap_sound = pygame.mixer.Sound("Data\\Sounds\\Flap.wav")
 ding_sound = pygame.mixer.Sound("Data\\Sounds\\Ding.wav")
+all_sounds = (button_sound, hit_sound, flap_sound, ding_sound)
 
 current_room = main_room
 
