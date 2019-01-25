@@ -132,7 +132,7 @@ def check_data_file():  # checks if the file exists
         open("Data\\Data.txt")  # todo check to see if the file is really closed
     except IOError:
         data_file = open("Data\\Data.txt", "w")
-        data_file.write("000@0")
+        data_file.write("000@1.00@0")
         data_file.close()
         print "Data file not found; creating a new one."
 
@@ -144,7 +144,7 @@ def save_load_best():  # saves and loads the best score
             prev_best_score = int(data_file.read()[:3])
         except ValueError:
             data_file = open("Data\\Data.txt", "w")
-            data_file.write("000@0")
+            data_file.write("000@1.00@0")
             data_file.close()
             print "An error occurred; created a new data file."
             return "0"
@@ -169,17 +169,17 @@ def save_load_best():  # saves and loads the best score
 def statistics():  # saves how many times the user has played
     with open("Data\\Data.txt", "r+") as data_file:
         try:
-            prev_times_played = int(data_file.read()[4:])
+            prev_times_played = int(data_file.read()[9:])
         except ValueError:
             data_file = open("Data\\Data.txt", "w")
-            data_file.write("000@0")
+            data_file.write("000@1.00@0")
             data_file.close()
             print "An error occurred; created a new data file."
             return 0
         else:
             if start:
                 prev_times_played += 1
-            data_file.seek(4)
+            data_file.seek(9)
             data_file.write(str(prev_times_played))
             return prev_times_played
 
@@ -190,25 +190,34 @@ def load_data():
             best_score = int(data_file.read()[:3])
         except ValueError:
             data_file = open("Data\\Data.txt", "w")
-            data_file.write("000@0")
+            data_file.write("000@1.00@0")
             data_file.close()
             print "An error occurred; created a new data file."
             return 0, "0"
         else:
             data_file.seek(0)
-            times_played = data_file.read()[4:]
+            times_played = data_file.read()[9:]
             return best_score, times_played
 
 
 def erase_data():
     with open("Data\\Data.txt", "w") as data_file:
-        data_file.write("000@0")
+        data_file.write("000@1.00@0")
     print "Data erased."
 
 
-def change_sound_volume(slider):
-    for sound in all_sounds:
-        sound.set_volume(slider.volume)
+def change_sound_volume(volume=None, slider=None):
+    if slider is not None:
+        for sound in all_sounds:
+            sound.set_volume(slider.volume)
+    else:
+        for sound in all_sounds:
+            sound.set_volume(volume)
+
+
+def get_sound_volume():
+    with open("Data\\Data.txt", "r") as data:
+        return float(data.read()[4:7])
 
 
 def show_score():  # shows the score while playing
@@ -398,11 +407,13 @@ def sound_room():
     button1 = Button((width / 2 - 260 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Save", colors, True)
     button2 = Button((width / 2 - 120 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Cancel", colors, True)
     button3 = Button((width / 2 + 100 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Reset", colors, True)
-    slider = VolumeSlider((width / 2 - 200, height / 2 + 60), (255, 16, 16), colors)
+    slider = VolumeSlider((width / 2 - 200, height / 2 + 40), (255, 16, 16), colors, (400, 60))
     buttons = (button1, button2, button3)
     sliders = (slider,)
 
     sound = Settings(title_text, (200, 200, 16), buttons, button_sound, sliders)
+
+    slider.get_volume("Data\\Data.txt")
 
     while sound.run:
         for event in pygame.event.get():
@@ -411,18 +422,20 @@ def sound_room():
                 current_room = quit
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if sound.button_pressed() == 0:
-                    change_sound_volume(slider)
+                    change_sound_volume(None, slider)
+                    slider.set_volume("Data\\Data.txt")
                     sound.exit()
                     current_room = options_room
                 elif sound.button_pressed() == 1:
                     sound.exit()
                     current_room = options_room
-                elif sound.button_pressed() == 2:  # todo save sound volume!
-                    slider.bar_length = 388
+                elif sound.button_pressed() == 2:
+                    slider.reset_volume()
 
-        sound.show(screen, (200 * SCL, 250 * SCL))
+        sound.show(screen, (175 * SCL, 250 * SCL))
         pygame.display.flip()
         clock.tick(48)
+
 
 def drawing(bird_, pipes_, ground_):
     global timer
@@ -625,6 +638,7 @@ screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Flappy Birb")
 clock = pygame.time.Clock()
 restart_times = 0  # how many times the user restarts
+volume = get_sound_volume()
 
 score_font = pygame.font.SysFont("calibri", 65, True)  # score
 instructions_font = pygame.font.SysFont("calibri", 20, True)  # instructions
@@ -659,6 +673,7 @@ flap_sound = pygame.mixer.Sound("Data\\Sounds\\Flap.wav")
 ding_sound = pygame.mixer.Sound("Data\\Sounds\\Ding.wav")
 all_sounds = (button_sound, hit_sound, flap_sound, ding_sound)
 
+change_sound_volume(volume)
 current_room = main_room
 
 while running:

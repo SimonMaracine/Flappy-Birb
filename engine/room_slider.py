@@ -1,14 +1,14 @@
 import pygame
 
 class VolumeSlider(object):
-    def __init__(self, (x, y), color, colors):
+    def __init__(self, (x, y), color, colors, (width, height)):
         self.x = x
         self.y = y
         self.color = color
         self.colors = colors
         self.highlight = False
-        self.width = 400
-        self.height = 60
+        self.width = width
+        self.height = height
         self.bar_length = self.width - 12
         self.volume = 1.0
 
@@ -36,7 +36,21 @@ class VolumeSlider(object):
                 self.bar_length = mouse_pos - self.x
                 if self.bar_length <= 2:
                     self.volume = 0.0
-                elif self.bar_length >= 386:
+                elif self.bar_length >= self.width - 14:
                     self.volume = 1.0
                 else:
-                    self.volume = (self.bar_length * 1.0) / 388
+                    self.volume = (self.bar_length * 1.0) / (self.width - 12)
+
+    def reset_volume(self):
+        self.bar_length = self.width - 12
+        self.volume = 1.0
+
+    def set_volume(self, path):
+        with open(path, "r+") as data:
+            data.seek(4)
+            data.write(str(round(self.volume, 2)))
+
+    def get_volume(self, path):
+        with open(path, "r") as data:
+            self.volume = float(data.read()[4:7])
+        self.bar_length = int(self.volume * (self.width - 12))
