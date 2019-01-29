@@ -400,14 +400,14 @@ def info_room():
 def sound_room():
     global current_room
 
-    title_font = pygame.font.SysFont("calibri", 80, True)
-    button_font = pygame.font.SysFont("calibri", 60, True)
+    title_font = pygame.font.SysFont("calibri", int(80 * SCL), True)
+    button_font = pygame.font.SysFont("calibri", int(60 * SCL), True)
     title_text = title_font.render("Volume", True, (0, 0, 0))
     colors = ((0, 0, 0), (235, 212, 222))
     button1 = Button((width / 2 - 260 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Save", colors, True)
     button2 = Button((width / 2 - 120 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Cancel", colors, True)
     button3 = Button((width / 2 + 100 * SCL, height / 2 + 160 * SCL), (255, 16, 16), button_font, "Reset", colors, True)
-    slider = VolumeSlider((width / 2 - 200, height / 2 + 40), (255, 16, 16), colors, (400, 60))
+    slider = VolumeSlider((width / 2 - 200 * SCL, height / 2 + 40 * SCL), (255, 16, 16), colors, (400 * SCL, 60 * SCL))
     buttons = (button1, button2, button3)
     sliders = (slider,)
 
@@ -570,7 +570,7 @@ def main_room():
                     main.exit()
                     current_room = quit
 
-        main.show(screen, (75, 50))
+        main.show(screen, (75 * SCL, 50 * SCL))
         score_text = that_font.render("Best score: " + best_score, True, (0, 0, 0))
         times_text = that_font.render("Times played: " + times_played, True, (0, 0, 0))
         screen.blit(score_text, (100 * SCL, 220 * SCL))
@@ -583,8 +583,8 @@ def main_room():
 def options_room():
     global current_room
 
-    title_font = pygame.font.SysFont("calibri", 80, True)
-    button_font = pygame.font.SysFont("calibri", 60, True)
+    title_font = pygame.font.SysFont("calibri", int(80 * SCL), True)
+    button_font = pygame.font.SysFont("calibri", int(60 * SCL), True)
     title_text = title_font.render("Options", True, (0, 0, 0))
     colors = ((0, 0, 0), (235, 212, 222))
     button1 = Button((width / 2 - 90 * SCL, height / 2), (255, 16, 16), button_font, "RESET DATA", colors, True)
@@ -640,14 +640,14 @@ clock = pygame.time.Clock()
 restart_times = 0  # how many times the user restarts
 volume = get_sound_volume()
 
-score_font = pygame.font.SysFont("calibri", 65, True)  # score
-instructions_font = pygame.font.SysFont("calibri", 20, True)  # instructions
+score_font = pygame.font.SysFont("calibri", int(65 * SCL), True)  # score
+instructions_font = pygame.font.SysFont("calibri", int(20 * SCL), True)  # instructions
 instructions_text = instructions_font.render("Press the spacebar to get started.", True, (0, 0, 0))
-end_score_font = pygame.font.SysFont("calibri", 38, True)  # end score
-game_over_font = pygame.font.SysFont("calibri", 70, True)  # game_over
+end_score_font = pygame.font.SysFont("calibri", int(38 * SCL), True)  # end score
+game_over_font = pygame.font.SysFont("calibri", int(70 * SCL), True)  # game_over
 game_over_text = game_over_font.render("Game Over", True, (0, 0, 0))
-fps_font = pygame.font.SysFont("calibri", 15, True)  # fps
-ver_font = pygame.font.SysFont("calibri", 15, True)  # version
+fps_font = pygame.font.SysFont("calibri", int(15 * SCL), True)  # fps
+ver_font = pygame.font.SysFont("calibri", int(15 * SCL), True)  # version
 end_background = pygame.Surface((400 * SCL, 410 * SCL), pygame.SRCALPHA)  # for ending description rectangle thingy
 
 background = load_image("Data\\Assets\\Background.png").convert()
