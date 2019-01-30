@@ -7,7 +7,7 @@ from engine.useful_functions import load_image
 import pygame
 from random import randint
 
-version = "v1.0.1"
+version = "v1.0.2"
 width = 600
 height = 750
 SCL = 1
@@ -115,7 +115,7 @@ class Ground(object):
         screen.blit(ground, (self.x, height - self.height))
         screen.blit(ground, (width + self.x, height - self.height))
         if self.offscreen():
-            self.x = -1 * SCL
+            self.x = -1
 
     def move(self):
         self.x -= self.vel
@@ -129,7 +129,7 @@ class Ground(object):
 
 def check_data_file():  # checks if the file exists
     try:
-        open("Data\\Data.txt")  # todo check to see if the file is really closed
+        open("Data\\Data.txt")
     except IOError:
         data_file = open("Data\\Data.txt", "w")
         data_file.write("000@1.00@0")
@@ -440,7 +440,6 @@ def sound_room():
 def drawing(bird_, pipes_, ground_):
     global timer
 
-    screen.fill((0, 0, 0))
     screen.blit(background, (0, 0))
 
     if bird_.in_air and timer <= 0:
