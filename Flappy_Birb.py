@@ -226,11 +226,9 @@ def show_score():  # shows the score while playing
         screen.blit(score_text, (width / 2 - 10 * SCL, 130 * SCL))
 
 
-
 def show_instructions():  # shows the instructions at the beginning (only once)
     if not start and restart_times < 1:
         screen.blit(instructions_text, (width / 2 - 140 * SCL, height / 2 + 150 * SCL))
-
 
 
 def show_fps():
@@ -239,11 +237,9 @@ def show_fps():
     screen.blit(fps_text, (10 * SCL, height - 20 * SCL))
 
 
-
 def show_version():
     ver_text = ver_font.render(version, False, (0, 0, 0))
     screen.blit(ver_text, (width - 45 * SCL, height - 20 * SCL))
-
 
 
 def game_over_room(bird_):
