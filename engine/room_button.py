@@ -1,4 +1,4 @@
-import pygame
+from pygame import draw, mouse
 
 class Button(object):
     def __init__(self, (x, y), color, font, actual_text, colors, antial=False):
@@ -14,16 +14,16 @@ class Button(object):
         self.height = font.size(actual_text)[1]
 
     def show(self, surface):
-        pygame.draw.rect(surface, self.color, (self.x, self.y, self.width, self.height))
+        draw.rect(surface, self.color, (self.x, self.y, self.width, self.height))
         text = self.font.render(self.actual_text, self.antial, self.colors[0 if not self.highlight else 1])
         surface.blit(text, (self.x + 5, self.y + 2))
 
     def pressed(self):
-        mouse_pos = pygame.mouse.get_pos()
+        mouse_pos = mouse.get_pos()
         if self.x + self.width > mouse_pos[0] > self.x:
             if self.y + self.height > mouse_pos[1] > self.y:
                 self.highlight = True
-                if pygame.mouse.get_pressed()[0]:
+                if mouse.get_pressed()[0]:
                     return True
             else:
                 self.highlight = False
