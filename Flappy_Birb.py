@@ -7,11 +7,12 @@ from engine.useful_functions import load_image
 import pygame
 from random import randint
 
-version = "v1.0.2"
+version = "v1.1.0"
 width = 600
 height = 750
 SCL = 1
 running = True
+fullscreen = True
 
 
 class Player(object):
@@ -206,6 +207,17 @@ def erase_data():
     print "Data erased."
 
 
+def switch_fullscreen():
+    global fullscreen
+
+    if not fullscreen:
+        fullscreen = True
+        return pygame.display.set_mode((width, height))
+    else:
+        fullscreen = False
+        return pygame.display.set_mode((width, height), pygame.FULLSCREEN)
+
+
 def change_sound_volume(volume=None, slider=None):
     if slider is not None:
         for sound in all_sounds:
@@ -279,6 +291,7 @@ def game_over_room(bird_):
 
         end_background.fill((255, 255, 170))
         screen.blit(end_background, (100 * SCL, 165 * SCL))
+        pygame.draw.rect(screen, (200, 0, 0), (98 * SCL, 163 * SCL, 400 * SCL, 410 * SCL), 6)
         game_over.show(screen, (width / 2 - 165 * SCL, 240 * SCL))
         screen.blit(end_score_text, (width / 2 - 145 * SCL, 360 * SCL))
         screen.blit(best_score_text, (width / 2 + 35 * SCL, 360 * SCL))
@@ -580,17 +593,18 @@ def main_room():
 
 
 def options_room():
-    global current_room
+    global current_room, screen
 
     title_font = pygame.font.SysFont("calibri", int(80 * SCL), True)
     button_font = pygame.font.SysFont("calibri", int(60 * SCL), True)
     title_text = title_font.render("Options", True, (0, 0, 0))
     colors = ((0, 0, 0), (235, 212, 222))
-    button1 = Button((width / 2 - 90 * SCL, height / 2), (255, 16, 16), button_font, "RESET DATA", colors, True)
-    button2 = Button((width / 2 - 90 * SCL, height / 2 + 75 * SCL), (255, 16, 16), button_font, "INFO", colors, True)
-    button3 = Button((width / 2 - 90 * SCL, height / 2 + 150 * SCL), (255, 16, 16), button_font, "VOLUME", colors, True)
-    button4 = Button((width / 2 - 90 * SCL, height / 2 + 225 * SCL), (255, 16, 16), button_font, "BACK", colors, True)
-    buttons = (button1, button2, button3, button4)
+    button1 = Button((width / 2 - 90 * SCL, height / 2 - 75), (255, 16, 16), button_font, "RESET DATA", colors, True)
+    button2 = Button((width / 2 - 90 * SCL, height / 2), (255, 16, 16), button_font, "INFO", colors, True)
+    button3 = Button((width / 2 - 90 * SCL, height / 2 + 75 * SCL), (255, 16, 16), button_font, "VOLUME", colors, True)
+    button4 = Button((width / 2 - 90 * SCL, height / 2 + 150 * SCL), (255, 16, 16), button_font, "FULLSCREEN", colors, True)
+    button5 = Button((width / 2 - 90 * SCL, height / 2 + 225 * SCL), (255, 16, 16), button_font, "BACK", colors, True)
+    buttons = (button1, button2, button3, button4, button5)
 
     options = MainMenu(title_text, (200, 200, 16), buttons, button_sound)
 
@@ -611,10 +625,12 @@ def options_room():
                     options.exit()
                     current_room = sound_room
                 elif options.button_pressed() == 3:
+                    screen = switch_fullscreen()
+                elif options.button_pressed() == 4:
                     options.exit()
                     current_room = main_room
 
-        options.show(screen, (225 * SCL, 230 * SCL))
+        options.show(screen, (225 * SCL, 180 * SCL))
         pygame.display.flip()
         clock.tick(48)
 
@@ -633,7 +649,7 @@ if info.current_h <= 768:
     height = 700
     SCL = 0.933
 pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon2.png"))
-screen = pygame.display.set_mode((width, height))
+screen = switch_fullscreen()
 pygame.display.set_caption("Flappy Birb")
 clock = pygame.time.Clock()
 restart_times = 0  # how many times the user restarts
