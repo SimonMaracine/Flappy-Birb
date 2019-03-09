@@ -648,7 +648,7 @@ if info.current_h <= 768:
     width = 560
     height = 700
     SCL = 0.933
-pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon2.png"))
+pygame.display.set_icon(pygame.image.load("Data\\Assets\\BirbIcon.png"))
 screen = switch_fullscreen()
 pygame.display.set_caption("Flappy Birb")
 clock = pygame.time.Clock()
