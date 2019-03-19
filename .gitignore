@@ -1,2 +1,11 @@
 # Ignore that workspace.xml
 *.xml
+*.spec
+*.exe
+*.toc
+*.zip
+*.pkg
+*.manifest
+*.pyz
+warn-Flappy_Birb.txt
+xref-Flappy_Birb.html
